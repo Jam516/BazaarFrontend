@@ -1,10 +1,78 @@
 import type { NextPage } from 'next'
 import { useState, useEffect } from 'react';
-import { BuyModal } from '@reservoir0x/reservoir-kit-ui'
+
+import { createClient, getClient, Execute } from "@reservoir0x/reservoir-sdk"
+import { ethers } from "ethers";
+
+import { 
+  WagmiConfig, 
+  createConfig, 
+  configureChains, 
+  mainnet, 
+  useConnect,
+  useAccount,
+  useDisconnect,
+  useEnsAvatar,
+  useEnsName
+} from 'wagmi'
+ 
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
+ 
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
+const resKey = process.env['RESERVOIR_KEY']
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [mainnet],
+  [alchemyProvider({ apiKey: 'yourAlchemyApiKey' }), publicProvider()],
+)
+ 
+// Set up wagmi config
+const config = createConfig({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new CoinbaseWalletConnector({
+      chains,
+      options: {
+        appName: 'wagmi',
+      },
+    }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        projectId: '...',
+      },
+    }),
+    new InjectedConnector({
+      chains,
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),
+  ],
+  publicClient,
+  webSocketPublicClient,
+})
+
+createClient({
+  chains: [{
+    id: 1,
+    baseApiUrl: 'https://api.reservoir.tools',
+    default: true,
+    apiKey: process.env['RESERVOIR_KEY']
+  }],
+  source: "https://marketplace.reservoir.tools/"
+});
 
 function NFTRow({ nft }) {
   const discount = (
@@ -14,6 +82,13 @@ function NFTRow({ nft }) {
   );
 
   const handleClick = () => {
+    // getClient()?.actions.buyToken({
+    //   items: [{ token: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d:1", quantity: 1 }],
+    //   signer,
+    //   onProgress: (steps: Execute['steps']) => {
+    //     console.log(steps)
+    //   }
+    // });
     console.log(`Bought ${nft.token_id}`);
   };
 
@@ -129,44 +204,87 @@ function FilterableCollectionTable() {
   );
 }
 
+export function Profile() {
+  const { address, connector, isConnected } = useAccount()
+  const { data: ensAvatar } = useEnsAvatar({ address })
+  const { data: ensName } = useEnsName({ address })
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect()
+  const { disconnect } = useDisconnect()
+ 
+  if (isConnected) {
+    return (
+      <div>
+        <img src={ensAvatar} alt="ENS Avatar" />
+        <div>{ensName ? `${ensName} (${address})` : address}</div>
+        <div>Connected to {connector.name}</div>
+        <button onClick={disconnect}>Disconnect</button>
+      </div>
+    )
+  }
+ 
+  return (
+    <div>
+      {connectors.map((connector) => (
+        <button
+          disabled={!connector.ready}
+          key={connector.id}
+          onClick={() => connect({ connector })}
+        >
+          {connector.name}
+          {!connector.ready && ' (unsupported)'}
+          {isLoading &&
+            connector.id === pendingConnector?.id &&
+            ' (connecting)'}
+        </button>
+      ))}
+ 
+      {error && <div>{error.message}</div>}
+    </div>
+  )
+}
+
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Bargain Bazaar</title>
-        <meta name="description" content="Discount NFT Store" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <div className={styles.heading}>
-          <h1 className={styles.title}>
-            Bargain Bazaar
-          </h1>
-
-          <p className={styles.description}>
-            Buy undervalued NFTs
-          </p>
-        </div>
-
-        <FilterableCollectionTable />
-
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://twitter.com/0xKofi"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Built on
-          <span className={styles.logo}>
-            <Image src="/replit.svg" alt="Replit Logo" width={20} height={18} />
-          </span>
-          Replit
-        </a>
-      </footer>
-    </div>
+    <WagmiConfig config={config}>
+      <div className={styles.container}>
+        <Head>
+          <title>Bargain Bazaar</title>
+          <meta name="description" content="Discount NFT Store" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+  
+        <main className={styles.main}>
+          <Profile />
+          <div className={styles.heading}>
+            <h1 className={styles.title}>
+              Bargain Bazaar
+            </h1>
+  
+            <p className={styles.description}>
+              Buy undervalued NFTs
+            </p>
+          </div>
+  
+          <FilterableCollectionTable />
+  
+        </main>
+  
+        <footer className={styles.footer}>
+          <a
+            href="https://twitter.com/0xKofi"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Built on
+            <span className={styles.logo}>
+              <Image src="/replit.svg" alt="Replit Logo" width={20} height={18} />
+            </span>
+            Replit
+          </a>
+        </footer>
+      </div>
+    </WagmiConfig>
   )
 }
 
