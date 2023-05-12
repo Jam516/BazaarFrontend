@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import '../styles/fonts.css'
 import { 
   ReservoirKitProvider, 
-  getDefaultWallets,
+  getDefaultWallets, //module has no exported member called getDefaultWallets
   lightTheme as rainbowLightTheme 
 } from '@reservoir0x/reservoir-kit-ui'
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
