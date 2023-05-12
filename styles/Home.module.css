@@ -1,0 +1,195 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.title {
+  font-size: 40px;
+  
+  margin-bottom: 1px;
+  margin-top: 15px;
+  text-align: center;
+  
+}
+
+.description {
+  font-size: 21px;
+  text-align: center; 
+  margin-top: 10px;
+  margin-bottom: 20px;
+  
+}
+
+.filterableCollectionTable {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  
+}
+
+.dropDownMenuWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%; 
+}
+
+.dropDownMenu {
+  box-sizing: border-box;
+  padding: 0px 12px;
+  margin-bottom: 30px;
+  text-align: center;
+  
+  background:#FFFFFF;
+  border: 1px solid #000000;
+  box-shadow: 4px 5px 0px #001429;
+  font-family: 'HelveticaDisplayBd';
+  font-size: 16px;
+}
+
+.collectionTableWrapper {
+  overflow-x: auto;
+  width: 100%;  
+}
+
+.collectionTable {
+  padding: 0px;
+  border-collapse: separate;
+  border-spacing: 0 14px;
+  width: 100%;
+  min-width: 460px; 
+  max-width: 1300px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stickyColumn {
+  position: sticky;
+  left: 0;
+  background-color: #FFFFFF; /* You may need to set the background color of the cell */
+  z-index: 2; /* Use z-index to keep it above the other cells */
+}
+
+.tableHeader {  
+  background:#FFFFFF;
+  border: 2px solid #000000;
+  box-shadow: 4px 5px 0px #001429;
+  text-align: left;
+}
+
+.tableRow {  
+  background:#FFFFFF;
+  border: 1px solid #000000;
+  box-shadow: 4px 5px 0px #001429;
+}
+
+.tableCell {
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-left: none;
+  border-right: none;
+  padding: 10px;
+}
+
+.discountCell {
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-left: none;
+  border-right: none;
+  padding: 10px;
+  background: #2FE81F;
+}
+
+.valueCell {
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-left: none;
+  border-right: none;
+  padding: 10px;
+  background: #91F2A7;
+}
+
+.tableRow .tableCell:first-child {
+  border-left: 1px solid #000000;;
+}
+
+.tableRow .tableCell:last-child {
+  border-right: 1px solid #000000;;
+}
+
+.tableHeader .tableCell:first-child {
+  border-left: 1px solid #000000;;
+}
+
+.tableHeader .tableCell:last-child {
+  border-right: 1px solid #000000;;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.dotsBar {
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  --c: linear-gradient(currentColor 0 0);
+  --r1: radial-gradient(farthest-side at bottom,currentColor 93%,#0000);
+  --r2: radial-gradient(farthest-side at top   ,currentColor 93%,#0000);
+  background: 
+    var(--c) ,
+    var(--r1),
+    var(--r2),
+    var(--c) ,  
+    var(--r1),
+    var(--r2),
+    var(--c) ,
+    var(--r1),
+    var(--r2);
+  background-repeat: no-repeat;
+  animation: db2 1s infinite alternate;
+}
+
+@keyframes db2 {
+  0%,25% {
+    background-size: 8px 0,8px 4px,8px 4px,8px 0,8px 4px,8px 4px,8px 0,8px 4px,8px 4px;
+    background-position: 0 50%,0 calc(50% - 2px),0 calc(50% + 2px),50% 50%,50% calc(50% - 2px),50% calc(50% + 2px),100% 50%,100% calc(50% - 2px),100% calc(50% + 2px);
+ }
+ 50% {
+    background-size: 8px 100%,8px 4px,8px 4px,8px 0,8px 4px,8px 4px,8px 0,8px 4px,8px 4px;
+    background-position: 0 50%,0 calc(0% - 2px),0 calc(100% + 2px),50% 50%,50% calc(50% - 2px),50% calc(50% + 2px),100% 50%,100% calc(50% - 2px),100% calc(50% + 2px);
+ }
+ 75% {
+    background-size: 8px 100%,8px 4px,8px 4px,8px 100%,8px 4px,8px 4px,8px 0,8px 4px,8px 4px;
+    background-position: 0 50%,0 calc(0% - 2px),0 calc(100% + 2px),50% 50%,50% calc(0% - 2px),50% calc(100% + 2px),100% 50%,100% calc(50% - 2px),100% calc(50% + 2px);
+ }
+ 95%,100% {
+    background-size: 8px 100%,8px 4px, 8px 4px,8px 100%,8px 4px,8px 4px,8px 100%,8px 4px,8px 4px;
+    background-position: 0 50%,0 calc(0% - 2px),0 calc(100% + 2px),50% 50%,50% calc(0% - 2px),50% calc(100% + 2px),100% 50%,100% calc(0% - 2px),100% calc(100% + 2px);
+ }
+}
