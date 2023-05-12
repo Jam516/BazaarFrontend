@@ -1,78 +1,11 @@
 import type { NextPage } from 'next'
 import { useState, useEffect } from 'react';
-
-import { createClient, getClient, Execute } from "@reservoir0x/reservoir-sdk"
-import { ethers } from "ethers";
-
-import { 
-  WagmiConfig, 
-  createConfig, 
-  configureChains, 
-  mainnet, 
-  useConnect,
-  useAccount,
-  useDisconnect,
-  useEnsAvatar,
-  useEnsName
-} from 'wagmi'
- 
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
- 
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { useAccount, useConnect, useEnsAvatar, useEnsName } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
 
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-
-const resKey = process.env['RESERVOIR_KEY']
-
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet],
-  [alchemyProvider({ apiKey: 'yourAlchemyApiKey' }), publicProvider()],
-)
- 
-// Set up wagmi config
-const config = createConfig({
-  autoConnect: true,
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'wagmi',
-      },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        projectId: '...',
-      },
-    }),
-    new InjectedConnector({
-      chains,
-      options: {
-        name: 'Injected',
-        shimDisconnect: true,
-      },
-    }),
-  ],
-  publicClient,
-  webSocketPublicClient,
-})
-
-createClient({
-  chains: [{
-    id: 1,
-    baseApiUrl: 'https://api.reservoir.tools',
-    default: true,
-    apiKey: process.env['RESERVOIR_KEY']
-  }],
-  source: "https://marketplace.reservoir.tools/"
-});
 
 function NFTRow({ nft }) {
   const discount = (
@@ -204,49 +137,21 @@ function FilterableCollectionTable() {
   );
 }
 
-export function Profile() {
-  const { address, connector, isConnected } = useAccount()
-  const { data: ensAvatar } = useEnsAvatar({ address })
-  const { data: ensName } = useEnsName({ address })
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect()
-  const { disconnect } = useDisconnect()
- 
+function ConnectWalletButton() {
+  const { isConnected } = useAccount();
+  const { connect } = useConnect({
+    connector: new InjectedConnector(),
+  });
+
   if (isConnected) {
-    return (
-      <div>
-        <img src={ensAvatar} alt="ENS Avatar" />
-        <div>{ensName ? `${ensName} (${address})` : address}</div>
-        <div>Connected to {connector.name}</div>
-        <button onClick={disconnect}>Disconnect</button>
-      </div>
-    )
+    return "Blockie";
   }
- 
-  return (
-    <div>
-      {connectors.map((connector) => (
-        <button
-          disabled={!connector.ready}
-          key={connector.id}
-          onClick={() => connect({ connector })}
-        >
-          {connector.name}
-          {!connector.ready && ' (unsupported)'}
-          {isLoading &&
-            connector.id === pendingConnector?.id &&
-            ' (connecting)'}
-        </button>
-      ))}
- 
-      {error && <div>{error.message}</div>}
-    </div>
-  )
+
+  return <button onClick={() => connect()}>Connect Wallet</button>;
 }
 
 const Home: NextPage = () => {
   return (
-    <WagmiConfig config={config}>
       <div className={styles.container}>
         <Head>
           <title>Bargain Bazaar</title>
@@ -255,7 +160,7 @@ const Home: NextPage = () => {
         </Head>
   
         <main className={styles.main}>
-          <Profile />
+          <ConnectWalletButton />
           <div className={styles.heading}>
             <h1 className={styles.title}>
               Bargain Bazaar
@@ -284,7 +189,6 @@ const Home: NextPage = () => {
           </a>
         </footer>
       </div>
-    </WagmiConfig>
   )
 }
 

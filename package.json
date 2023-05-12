@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@rainbow-me/rainbowkit": "^1.0.0",
     "@reservoir0x/reservoir-sdk": "^0.10.2",
     "ethers": "^5.6.1",
     "next": "12.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "viem": "^0.3.22",
     "wagmi": "^1.0.2"
   },
   "devDependencies": {
